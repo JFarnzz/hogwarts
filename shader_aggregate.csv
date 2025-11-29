@@ -1,0 +1,12 @@
+shader_asset_or_name,count,materials_sample
+UNKNOWN,997,Assets/2DTextures/Icons/mmPoint.mat;Assets/2DTextures/Materials/intro.mat;Assets/Animations/Player/Materials/EyesMaterial.mat;Assets/Animations/Player/Materials/eye_ball.mat;Assets/Animations/Player/Materials/pupil.mat;Assets/Animations/Player/Materials/SkinMaterial.mat;Assets/Animations/Player/Materials/skin_002.mat;Assets/Animations/Player/Materials/SuitMaterial.mat;Assets/Animations/Player/Materials/TeethMaterial.mat;Assets/Animations/Player/Materials/TongueMaterial.mat
+Assets\Standard Assets\Effects\Projectors\Shaders\ProjectorLight.shader,2,Assets/Standard Assets/Effects/Projectors/Materials/GridProjector.mat;Assets/Standard Assets/Effects/Projectors/Materials/LightProjector.mat
+Assets\Standard Assets\Effects\CinematicEffects(BETA)\AmbientOcclusion\AmbientOcclusion.cs,1,Assets/Scripts/Externals/Highlighting System/HighlightingSystemDemo/Assets/Materials/TransparentCutout.mat
+Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader,1,Assets/Standard Assets/Effects/GlassRefraction/Materials/GlassRefractive.mat
+Assets\Standard Assets\Effects\Projectors\Shaders\ProjectorMultiply.shader,1,Assets/Standard Assets/Effects/Projectors/Materials/ShadowProjector.mat
+Assets\Standard Assets\Effects\TessellationShaders\Shaders\BumpedSpecularDisplacement.shader,1,Assets/Standard Assets/Effects/TessellationShaders/Materials/TesselatedBumpSpecularDisplacement.mat
+Assets\Standard Assets\Effects\TessellationShaders\Shaders\BumpedSpecularSmooth.shader,1,Assets/Standard Assets/Effects/TessellationShaders/Materials/TesselatedBumpSpecularSmooth.mat
+Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasic.shader,1,Assets/Standard Assets/Effects/ToonShading/Materials/ToonBasic.mat
+Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasicOutline.shader,1,Assets/Standard Assets/Effects/ToonShading/Materials/ToonBasicOutline.mat
+Assets\Standard Assets\Effects\ToonShading\Shaders\ToonLit.shader,1,Assets/Standard Assets/Effects/ToonShading/Materials/ToonLit.mat
+Assets\Standard Assets\Effects\ToonShading\Shaders\ToonLitOutline.shader,1,Assets/Standard Assets/Effects/ToonShading/Materials/ToonLitOutline.mat
