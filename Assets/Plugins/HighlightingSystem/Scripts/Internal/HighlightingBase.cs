@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace HighlightingSystem
 {
+	// Base class for Highlighting System components
 	[RequireComponent(typeof(Camera))]
 	public class HighlightingBase : MonoBehaviour
 	{
@@ -390,8 +391,9 @@ namespace HighlightingSystem
 			int aa = QualitySettings.antiAliasing;
 			if (aa == 0) { aa = 1; }
 
-			// Reset aa value to 1 in case camera is in DeferredLighting or DeferredShading Rendering Path
-			if (cam.actualRenderingPath == RenderingPath.DeferredLighting || cam.actualRenderingPath == RenderingPath.DeferredShading) { aa = 1; }
+			// Reset aa value to 1 in case camera is in DeferredShading Rendering Path
+			// (RenderingPath.DeferredLighting has been removed/obsolete in newer Unity versions)
+			if (cam.actualRenderingPath == RenderingPath.DeferredShading) { aa = 1; }
 
 			return aa;
 		}
@@ -449,19 +451,8 @@ namespace HighlightingSystem
 		// 
 		protected virtual bool CheckSupported()
 		{
-			// Image Effects supported?
-			if (!SystemInfo.supportsImageEffects)
-			{
-				Debug.LogError("HighlightingSystem : Image effects is not supported on this platform!");
-				return false;
-			}
-			
-			// Render Textures supported?
-			if (!SystemInfo.supportsRenderTextures)
-			{
-				Debug.LogError("HighlightingSystem : RenderTextures is not supported on this platform!");
-				return false;
-			}
+			// SystemInfo.supportsImageEffects and supportsRenderTextures checks removed:
+			// these properties are obsolete and always return true in modern Unity versions.
 			
 			// Required Render Texture Format supported?
 			if (!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGB32))
@@ -470,11 +461,8 @@ namespace HighlightingSystem
 				return false;
 			}
 
-			if (SystemInfo.supportsStencil < 1)
-			{
-				Debug.LogError("HighlightingSystem : Stencil buffer is not supported on this platform!");
-				return false;
-			}
+			// Stencil support check removed: SystemInfo.supportsStencil is obsolete and
+			// always returns true in supported Unity versions, so no runtime check is required.
 			
 			// HighlightingOpaque shader supported?
 			if (!Highlighter.opaqueShader.isSupported)

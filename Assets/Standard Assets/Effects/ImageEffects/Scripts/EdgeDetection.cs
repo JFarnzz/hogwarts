@@ -55,9 +55,9 @@ namespace UnityStandardAssets.ImageEffects
 
         void SetCameraFlag ()
 		{
-            if (mode == EdgeDetectMode.SobelDepth || mode == EdgeDetectMode.SobelDepthThin)
+            if (mode is EdgeDetectMode.SobelDepth or EdgeDetectMode.SobelDepthThin)
                 GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
-            else if (mode == EdgeDetectMode.TriangleDepthNormals || mode == EdgeDetectMode.RobertsCrossDepthNormals)
+            else if (mode is EdgeDetectMode.TriangleDepthNormals or EdgeDetectMode.RobertsCrossDepthNormals)
                 GetComponent<Camera>().depthTextureMode |= DepthTextureMode.DepthNormals;
         }
 

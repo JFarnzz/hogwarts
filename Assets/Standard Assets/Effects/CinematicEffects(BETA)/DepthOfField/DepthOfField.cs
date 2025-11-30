@@ -806,7 +806,7 @@ namespace UnityStandardAssets.CinematicEffects
                 ? (sceneCamera.WorldToViewportPoint(focus.transform.position)).z / (sceneCamera.farClipPlane)
                 : (focus.plane * focus.plane * focus.plane * focus.plane);
 
-            if (settings.tweakMode == TweakMode.Basic || settings.tweakMode == TweakMode.Advanced)
+            if (settings.tweakMode is TweakMode.Basic or TweakMode.Advanced)
             {
                 float focusRange01 = focus.rangeAdjustment * focus.rangeAdjustment * focus.rangeAdjustment * focus.rangeAdjustment;
                 float focalLength = 4.0f / Mathf.Tan(0.5f * sceneCamera.fieldOfView * Mathf.Deg2Rad);

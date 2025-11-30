@@ -133,13 +133,11 @@ namespace UnityStandardAssets.ImageEffects
 
                 // "merge up" with background COC
                 dofHdrMaterial.SetTexture("_FgOverlap", temp2);
-                fromTo.MarkRestoreExpected(); // only touching alpha channel, RT restore expected
                 Graphics.Blit (fromTo, fromTo, dofHdrMaterial,  13);
                 RenderTexture.ReleaseTemporary(temp2);
             }
             else {
                 // capture full coc in alpha channel (fromTo is not read, but bound to detect screen flip)
-				fromTo.MarkRestoreExpected(); // only touching alpha channel, RT restore expected
                 Graphics.Blit (fromTo, fromTo, dofHdrMaterial,  0);
             }
         }
@@ -359,7 +357,7 @@ namespace UnityStandardAssets.ImageEffects
                 rtLow = RenderTexture.GetTemporary (source.width >> 1, source.height >> 1, 0, source.format);
                 rtLow2 = RenderTexture.GetTemporary (source.width >> 1, source.height >> 1, 0, source.format);
 
-                int blurPass = (blurSampleCount == BlurSampleCount.High || blurSampleCount == BlurSampleCount.Medium) ? 17 : 11;
+                int blurPass = (blurSampleCount is BlurSampleCount.High or BlurSampleCount.Medium) ? 17 : 11;
 
                 if (highResolution) {
                     dofHdrMaterial.SetVector ("_Offsets", new Vector4 (0.0f, internalBlurWidth, 0.025f, internalBlurWidth));

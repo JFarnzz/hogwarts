@@ -4,7 +4,8 @@ namespace UnityStandardAssets.Utility
 {
 	public class SmoothFollow : MonoBehaviour
 	{
-
+		// These SerializeField variables are assigned via Unity Inspector, not in code
+#pragma warning disable 0649
 		// The target we are following
 		[SerializeField]
 		private Transform target;
@@ -19,6 +20,7 @@ namespace UnityStandardAssets.Utility
 		private float rotationDamping;
 		[SerializeField]
 		private float heightDamping;
+#pragma warning restore 0649
 
 		// Use this for initialization
 		void Start() { }

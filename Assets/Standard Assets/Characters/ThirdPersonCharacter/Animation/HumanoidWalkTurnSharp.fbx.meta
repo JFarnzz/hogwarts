@@ -1398,3 +1398,10 @@ ModelImporter:
   additionalBone: 0
   userData: 
   assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 119922
+  packageName: PUN 2 - FREE
+  packageVersion: 2.52
+  assetPath: Assets/Standard Assets/Characters/ThirdPersonCharacter/Animation/HumanoidWalkTurnSharp.fbx
+  uploadId: 817708

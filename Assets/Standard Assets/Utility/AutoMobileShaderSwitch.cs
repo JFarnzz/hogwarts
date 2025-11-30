@@ -130,7 +130,7 @@ namespace UnityStandardAssets.Utility.Inspector
                         }
                         else
                         {
-                            if (props[n] == "-" || props[n] == "^" || props[n] == "v")
+                            if (props[n] is "-" or "^" or "v")
                             {
                                 if (GUI.Button(rect, props[n]))
                                 {

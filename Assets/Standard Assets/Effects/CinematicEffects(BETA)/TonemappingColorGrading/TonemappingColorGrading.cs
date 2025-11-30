@@ -810,7 +810,7 @@ namespace UnityStandardAssets.CinematicEffects
 #if UNITY_EDITOR
             validRenderTextureFormat = true;
 
-            if (source.format != RenderTextureFormat.ARGBHalf && source.format != RenderTextureFormat.ARGBFloat)
+            if (source.format is not RenderTextureFormat.ARGBHalf and not RenderTextureFormat.ARGBFloat)
                 validRenderTextureFormat = false;
 #endif
 
@@ -864,9 +864,6 @@ namespace UnityStandardAssets.CinematicEffects
                     Graphics.Blit(rts[i], rts[i + 1]);
                     lumRt = rts[i + 1];
                 }
-
-                // Keeping luminance values between frames, RT restore expected
-                m_SmallAdaptiveRt.MarkRestoreExpected();
 
                 material.SetFloat("_AdaptationSpeed", Mathf.Max(eyeAdaptation.speed, 0.001f));
 
@@ -963,7 +960,6 @@ namespace UnityStandardAssets.CinematicEffects
                     material.SetVector("_ChannelMixerGreen", colorGrading.channelMixer.channels[1]);
                     material.SetVector("_ChannelMixerBlue", colorGrading.channelMixer.channels[2]);
                     material.SetTexture("_CurveTex", curveTexture);
-                    internalLutRt.MarkRestoreExpected();
                     Graphics.Blit(identityLut, internalLutRt, material, (int)Pass.LutGen);
                     m_Dirty = false;
                 }

@@ -1,9 +1,14 @@
 {
     "name": "Assets",
-    "roots": ["Assets"],
+    "type": "asset",
+    "roots": [
+        "Assets",
+        "Packages"
+    ],
     "includes": [],
     "excludes": [],
     "options": {
+        "disabled": false,
         "types": true,
         "properties": true,
         "extended": false,

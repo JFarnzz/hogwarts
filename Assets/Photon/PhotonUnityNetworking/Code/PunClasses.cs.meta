@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: f06d628b665f88d4a85cf4f5d81caefd
+labels:
+- ExitGames
+- PUN
+- Photon
+- Networking
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 119922
+  packageName: PUN 2 - FREE
+  packageVersion: 2.52
+  assetPath: Assets/Photon/PhotonUnityNetworking/Code/PunClasses.cs
+  uploadId: 817708

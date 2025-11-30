@@ -464,7 +464,7 @@ public class Player : Photon.MonoBehaviour {
         anim.SetFloat("Speed", 0);
 
         Rigidbody rigidbody = GetComponent<Rigidbody>();
-        rigidbody.velocity = Vector3.zero;
+        rigidbody.linearVelocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
     }
 

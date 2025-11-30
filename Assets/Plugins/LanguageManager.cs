@@ -85,7 +85,7 @@ public class LanguageManager : MonoBehaviour
         isLoadingTranslations = false;
 
         if (reloadUI || reloadRequested) {
-            LocalizedText[] translatableTexts = GameObject.FindObjectsOfType<LocalizedText>();
+            LocalizedText[] translatableTexts = GameObject.FindObjectsByType<LocalizedText>(FindObjectsSortMode.None);
 
             foreach (LocalizedText text in translatableTexts) {
                 text.reload();

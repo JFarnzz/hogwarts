@@ -139,7 +139,10 @@ namespace UnityStandardAssets.CinematicEffects
             get { return _quadMesh; }
         }
 
+        // This SerializeField is assigned via Unity Inspector, not in code
+#pragma warning disable 0649
         [SerializeField] Mesh _quadMesh;
+#pragma warning restore 0649
 
         #endregion
 

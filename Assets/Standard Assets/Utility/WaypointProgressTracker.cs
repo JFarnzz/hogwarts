@@ -11,7 +11,10 @@ namespace UnityStandardAssets.Utility
         // This script manages the amount to look ahead along the route,
         // and keeps track of progress and laps.
 
+        // This SerializeField is assigned via Unity Inspector, not in code
+#pragma warning disable 0649
         [SerializeField] private WaypointCircuit circuit; // A reference to the waypoint-based route we should follow
+#pragma warning restore 0649
 
         [SerializeField] private float lookAheadForTargetOffset = 5;
         // The offset ahead along the route that the we will aim for

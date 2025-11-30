@@ -31,7 +31,7 @@ public class BroomstickControl : MonoBehaviour
         targetVelocity = Camera.main.transform.TransformDirection(targetVelocity);
 
 
-        rigidbody.velocity = targetVelocity;
+        rigidbody.linearVelocity = targetVelocity;
     }
 
     private void Update()

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,17 +21,23 @@ public interface IReadOnlyReference<out T>
 }
 public class InputSystemAgent : MonoBehaviour
 {
-    static InputSystemAgent _instance;
-    public static InputSystemAgent Instance => _instance ??= FindObjectOfType<InputSystemAgent>();
+    static InputSystemAgent? _instance;
+    public static InputSystemAgent Instance => _instance ??= FindFirstObjectByType<InputSystemAgent>();
+    // This SerializeField is assigned via Unity Inspector, not in code
+#pragma warning disable 0649
     [SerializeField]
-    private InputActionAsset defaultInputAsset;
+    private InputActionAsset? defaultInputAsset;
+#pragma warning restore 0649
     private void Awake()
     {
         _instance = this;
         EnhancedTouchSupport.Enable();
-        var actions = defaultInputAsset.actionMaps[0].actions;
-        defaultInputAsset?.Enable();
-        ConfigureActions(actions);
+        if (defaultInputAsset != null)
+        {
+            var actions = defaultInputAsset.actionMaps[0].actions;
+            defaultInputAsset.Enable();
+            ConfigureActions(actions);
+        }
     }
     private void ConfigureActions(ReadOnlyArray<InputAction> actions)
     {

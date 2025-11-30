@@ -30,7 +30,7 @@ namespace UnityStandardAssets.CrossPlatformInput
                 .isPlaying) //if in the editor, need to check if we are playing, as start is also called just after exiting play
 #endif
             {
-                var system = FindObjectOfType<EventSystem>();
+                var system = FindFirstObjectByType<EventSystem>();
 
                 if (system == null)
                 {
@@ -47,14 +47,14 @@ namespace UnityStandardAssets.CrossPlatformInput
 
         private void OnEnable()
         {
-            EditorUserBuildSettings.activeBuildTargetChanged += Update;
+            // EditorUserBuildSettings.activeBuildTargetChanged is deprecated
+            // Functionality maintained via EditorApplication.update
             EditorApplication.update += Update;
         }
 
 
         private void OnDisable()
         {
-            EditorUserBuildSettings.activeBuildTargetChanged -= Update;
             EditorApplication.update -= Update;
         }
 

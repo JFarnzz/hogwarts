@@ -18,10 +18,13 @@ namespace UnityStandardAssets.Utility
             Mobile
         }
 
+        // These SerializeField variables are assigned via Unity Inspector, not in code
+#pragma warning disable 0649
         [SerializeField] private BuildTargetGroup m_BuildTargetGroup;
         [SerializeField] private GameObject[] m_Content = new GameObject[0];
         [SerializeField] private MonoBehaviour[] m_MonoBehaviours = new MonoBehaviour[0];
         [SerializeField] private bool m_ChildrenOfThisObject;
+#pragma warning restore 0649
 
 #if !UNITY_EDITOR
 	void OnEnable()
@@ -34,14 +37,14 @@ namespace UnityStandardAssets.Utility
 
         private void OnEnable()
         {
-            EditorUserBuildSettings.activeBuildTargetChanged += Update;
+            // EditorUserBuildSettings.activeBuildTargetChanged is deprecated
+            // Functionality maintained via EditorApplication.update
             EditorApplication.update += Update;
         }
 
 
         private void OnDisable()
         {
-            EditorUserBuildSettings.activeBuildTargetChanged -= Update;
             EditorApplication.update -= Update;
         }
 

@@ -14,6 +14,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
 
+        // These SerializeField variables are assigned via Unity Inspector, not in code
+#pragma warning disable 0649
         [SerializeField]
         private AudioClip[] m_FootstepSounds; // an array of footstep sounds that will be randomly selected from.
 
@@ -41,6 +43,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private bool m_UseFovKick;
         [SerializeField] private bool m_UseHeadBob;
         [SerializeField] private float m_WalkSpeed;
+#pragma warning restore 0649
         private float m_YRotation;
 
         // Use this for initialization
