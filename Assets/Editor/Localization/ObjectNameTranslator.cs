@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 // Batch-translate GameObject names in the active scene or selected assets (Scenes/Prefabs) from Spanish to English.

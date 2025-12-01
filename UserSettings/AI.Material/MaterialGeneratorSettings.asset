@@ -18,24 +18,42 @@ MonoBehaviour:
         serializedData:
         - key: 0
           value:
-            rid: 1765684425286746112
+            rid: 1765684434130174022
         - key: 1
           value:
-            rid: 1765684425286746113
+            rid: 1765684434130174023
         - key: 2
           value:
-            rid: 1765684425286746114
+            rid: 1765684434130174024
       lastMaterialMappings:
         serializedData:
         - key: Standard
           value:
-            rid: 1765684424959066195
+            rid: 1765684434130174025
+        - key: Nature/Terrain/Standard
+          value:
+            rid: 1765684434130174026
       previewSettings:
         sizeFactor: 1
   references:
     version: 2
     RefIds:
-    - rid: 1765684424959066195
+    - rid: 1765684434130174022
+      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
+        asm: Unity.AI.Material}
+      data:
+        modelID: 44ec3749-963a-44b1-aa54-dc19f6ed8ab2
+    - rid: 1765684434130174023
+      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
+        asm: Unity.AI.Material}
+      data:
+        modelID: 
+    - rid: 1765684434130174024
+      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
+        asm: Unity.AI.Material}
+      data:
+        modelID: 44ec3749-963a-44b1-aa54-dc19f6ed8ab2
+    - rid: 1765684434130174025
       type: {class: 'SerializableDictionary`2[[Unity.AI.Material.Services.Stores.States.MapType, Unity.AI.Material],[System.String, mscorlib]]',
         ns: Unity.AI.Generators.Redux.Toolkit, asm: Unity.AI.Generators.Redux}
       data:
@@ -62,18 +80,30 @@ MonoBehaviour:
           value: None
         - key: 11
           value: None
-    - rid: 1765684425286746112
-      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
-        asm: Unity.AI.Material}
+    - rid: 1765684434130174026
+      type: {class: 'SerializableDictionary`2[[Unity.AI.Material.Services.Stores.States.MapType, Unity.AI.Material],[System.String, mscorlib]]',
+        ns: Unity.AI.Generators.Redux.Toolkit, asm: Unity.AI.Generators.Redux}
       data:
-        modelID: 44ec3749-963a-44b1-aa54-dc19f6ed8ab2
-    - rid: 1765684425286746113
-      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
-        asm: Unity.AI.Material}
-      data:
-        modelID: 
-    - rid: 1765684425286746114
-      type: {class: ModelSelection, ns: Unity.AI.Material.Services.Stores.States,
-        asm: Unity.AI.Material}
-      data:
-        modelID: 44ec3749-963a-44b1-aa54-dc19f6ed8ab2
+        serializedData:
+        - key: 1
+          value: None
+        - key: 2
+          value: _NormalMap
+        - key: 3
+          value: None
+        - key: 4
+          value: None
+        - key: 5
+          value: None
+        - key: 6
+          value: _Diffuse
+        - key: 7
+          value: None
+        - key: 8
+          value: None
+        - key: 9
+          value: None
+        - key: 10
+          value: None
+        - key: 11
+          value: None

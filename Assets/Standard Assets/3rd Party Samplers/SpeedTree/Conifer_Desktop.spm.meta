@@ -127,7 +127,7 @@ SpeedTreeImporter:
   generateColliders: 1
   generateRigidbody: 1
   materialVersion: 3
-  materialLocation: 0
+  materialLocation: 1
   fileIDType: 0
   userData: 
   assetBundleName: 

@@ -11,7 +11,9 @@ namespace UnityEditor.PostProcessing
         static void MenuCreatePostProcessingProfile()
         {
             var icon = EditorGUIUtility.FindTexture("ScriptableObject Icon");
+#pragma warning disable CS0618 // Suppress obsolete warning - Unity 6 compatibility
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<DoCreatePostProcessingProfile>(), "New Post-Processing Profile.asset", icon, null);
+#pragma warning restore CS0618
         }
 
         internal static PostProcessingProfile CreatePostProcessingProfileAtPath(string path)
@@ -23,6 +25,7 @@ namespace UnityEditor.PostProcessing
         }
     }
 
+#pragma warning disable CS0618 // EndNameEditAction is obsolete but still functional
     class DoCreatePostProcessingProfile : EndNameEditAction
     {
         public override void Action(int instanceId, string pathName, string resourceFile)
@@ -31,4 +34,5 @@ namespace UnityEditor.PostProcessing
             ProjectWindowUtil.ShowCreatedAsset(profile);
         }
     }
+#pragma warning restore CS0618
 }

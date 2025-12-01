@@ -1,230 +1,197 @@
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.ShaderGraph;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditor.Rendering.HighDefinition;
-using UnityEditor.Rendering.HighDefinition.ShaderGraph;
 using System.IO;
-using System.Linq;
 
 namespace ShaderGraphGenerators
 {
     /// <summary>
-    /// Editor utility to programmatically generate ToonBasic HDRP Shader Graph
-    /// This recreates the functionality of the legacy Toon/Basic shader for HDRP
+    /// Helper utility to guide ToonBasic HDRP Shader Graph creation.
     /// 
-    /// Usage: Tools -> Shader Conversion -> Generate ToonBasic HDRP Shader Graph
+    /// NOTE: Unity's Shader Graph API is internal and cannot be accessed programmatically.
+    /// This utility provides guidance and material conversion helpers instead.
+    /// 
+    /// For manual shader graph creation, see: TOONBASIC_CONVERSION.md
     /// </summary>
     public static class ToonBasicHDRPGenerator
     {
-        private const string OUTPUT_PATH = "Assets/Shaders/HDRP/ToonBasic_HDRP.shadergraph";
+        private const string SHADER_GRAPH_PATH = "Assets/Shaders/HDRP/ToonBasic_HDRP.shadergraph";
+        private const string HDRP_LIT_SHADER = "HDRP/Lit";
         
-        [MenuItem("Tools/Shader Conversion/Generate ToonBasic HDRP Shader Graph")]
-        public static void GenerateToonBasicShaderGraph()
+        [MenuItem("Tools/Shader Conversion/ToonBasic to HDRP/Show Conversion Guide")]
+        public static void ShowConversionGuide()
         {
-            Debug.Log("Starting ToonBasic HDRP Shader Graph generation...");
-            
-            try
-            {
-                // Ensure output directory exists
-                string directory = Path.GetDirectoryName(OUTPUT_PATH);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                    AssetDatabase.Refresh();
-                }
-                
-                // Create a new HDRP Lit Shader Graph
-                var graphData = new GraphData();
-                graphData.isSubGraph = false;
-                
-                // Set up HDRP Lit target
-                var target = (HDTarget)graphData.activeTargets.FirstOrDefault(t => t is HDTarget);
-                if (target == null)
-                {
-                    target = ScriptableObject.CreateInstance<HDTarget>();
-                    graphData.activeTargets.Add(target);
-                }
-                
-                // Configure HDRP target for opaque rendering (matching original shader)
-                target.TrySetActiveSubTarget(typeof(HDLitSubTarget));
-                
-                // Create property nodes
-                var colorProperty = new ColorShaderProperty
-                {
-                    displayName = "Main Color",
-                    value = new Color(0.5f, 0.5f, 0.5f, 1.0f)
-                };
-                graphData.AddGraphInput(colorProperty);
-                
-                var mainTexProperty = new Texture2DShaderProperty
-                {
-                    displayName = "Base (RGB)"
-                };
-                graphData.AddGraphInput(mainTexProperty);
-                
-                var toonShadeProperty = new CubemapShaderProperty
-                {
-                    displayName = "ToonShader Cubemap (RGB)"
-                };
-                graphData.AddGraphInput(toonShadeProperty);
-                
-                // Create nodes for the shader logic
-                // 1. Sample Base Texture
-                var sampleTextureNode = new SampleTexture2DNode();
-                graphData.AddNode(sampleTextureNode);
-                sampleTextureNode.drawState.position = new Rect(new Vector2(-800, 0), sampleTextureNode.drawState.position.size);
-                
-                // 2. Sample Cubemap for toon shading (using View Direction as approximation)
-                var sampleCubemapNode = new SampleCubemapNode();
-                graphData.AddNode(sampleCubemapNode);
-                sampleCubemapNode.drawState.position = new Rect(new Vector2(-800, 200), sampleCubemapNode.drawState.position.size);
-                
-                // 3. Get Normal in View Space (for cubemap lookup)
-                var normalNode = new NormalVectorNode();
-                normalNode.space = CoordinateSpace.View;
-                graphData.AddNode(normalNode);
-                normalNode.drawState.position = new Rect(new Vector2(-1000, 250), normalNode.drawState.position.size);
-                
-                // 4. Multiply Main Color with Texture
-                var multiplyColorTexNode = new MultiplyNode();
-                graphData.AddNode(multiplyColorTexNode);
-                multiplyColorTexNode.drawState.position = new Rect(new Vector2(-500, 0), multiplyColorTexNode.drawState.position.size);
-                
-                // 5. Multiply by 2 (for 2.0f * cube.rgb * col.rgb)
-                var multiplyBy2Node = new MultiplyNode();
-                graphData.AddNode(multiplyBy2Node);
-                multiplyBy2Node.drawState.position = new Rect(new Vector2(-300, 100), multiplyBy2Node.drawState.position.size);
-                
-                // 6. Create Vector1 node for the 2.0 multiplier
-                var twoValueNode = new Vector1Node();
-                twoValueNode.value = 2.0f;
-                graphData.AddNode(twoValueNode);
-                twoValueNode.drawState.position = new Rect(new Vector2(-500, 300), twoValueNode.drawState.position.size);
-                
-                // 7. Multiply cubemap with color*texture
-                var finalMultiplyNode = new MultiplyNode();
-                graphData.AddNode(finalMultiplyNode);
-                finalMultiplyNode.drawState.position = new Rect(new Vector2(-200, 150), finalMultiplyNode.drawState.position.size);
-                
-                // Connect property nodes to sampler nodes
-                var mainTexPropertyNode = new PropertyNode();
-                mainTexPropertyNode.property = mainTexProperty;
-                graphData.AddNode(mainTexPropertyNode);
-                mainTexPropertyNode.drawState.position = new Rect(new Vector2(-1000, -50), mainTexPropertyNode.drawState.position.size);
-                
-                var colorPropertyNode = new PropertyNode();
-                colorPropertyNode.property = colorProperty;
-                graphData.AddNode(colorPropertyNode);
-                colorPropertyNode.drawState.position = new Rect(new Vector2(-700, -100), colorPropertyNode.drawState.position.size);
-                
-                var cubemapPropertyNode = new PropertyNode();
-                cubemapPropertyNode.property = toonShadeProperty;
-                graphData.AddNode(cubemapPropertyNode);
-                cubemapPropertyNode.drawState.position = new Rect(new Vector2(-1000, 200), cubemapPropertyNode.drawState.position.size);
-                
-                // Create edges (connections between nodes)
-                // Connect properties to samplers
-                var mainTexToSampler = new Edge(
-                    mainTexPropertyNode.GetSlotReference(mainTexProperty.guid),
-                    sampleTextureNode.GetSlotReference(SampleTexture2DNode.TextureInputId)
-                );
-                graphData.AddEdge(mainTexToSampler);
-                
-                var cubemapToCubemapSampler = new Edge(
-                    cubemapPropertyNode.GetSlotReference(toonShadeProperty.guid),
-                    sampleCubemapNode.GetSlotReference(SampleCubemapNode.CubemapInputId)
-                );
-                graphData.AddEdge(cubemapToCubemapSampler);
-                
-                // Connect normal to cubemap LOD
-                var normalToCubemap = new Edge(
-                    normalNode.GetSlotReference(NormalVectorNode.OutputSlotId),
-                    sampleCubemapNode.GetSlotReference(SampleCubemapNode.DirInputId)
-                );
-                graphData.AddEdge(normalToCubemap);
-                
-                // Connect color * texture
-                var colorToMultiply = new Edge(
-                    colorPropertyNode.GetSlotReference(colorProperty.guid),
-                    multiplyColorTexNode.GetSlotReference(0)
-                );
-                graphData.AddEdge(colorToMultiply);
-                
-                var textureToMultiply = new Edge(
-                    sampleTextureNode.GetSlotReference(SampleTexture2DNode.OutputSlotRGBAId),
-                    multiplyColorTexNode.GetSlotReference(1)
-                );
-                graphData.AddEdge(textureToMultiply);
-                
-                // Connect cubemap * (color * texture)
-                var cubemapToFinalMultiply = new Edge(
-                    sampleCubemapNode.GetSlotReference(SampleCubemapNode.OutputSlotRGBId),
-                    finalMultiplyNode.GetSlotReference(0)
-                );
-                graphData.AddEdge(cubemapToFinalMultiply);
-                
-                var colorTexToFinalMultiply = new Edge(
-                    multiplyColorTexNode.GetSlotReference(MultiplyNode.OutputSlotId),
-                    finalMultiplyNode.GetSlotReference(1)
-                );
-                graphData.AddEdge(colorTexToFinalMultiply);
-                
-                // Connect 2.0 multiplier
-                var twoValueToMultiply = new Edge(
-                    twoValueNode.GetSlotReference(0),
-                    multiplyBy2Node.GetSlotReference(0)
-                );
-                graphData.AddEdge(twoValueToMultiply);
-                
-                var finalToMultiplyBy2 = new Edge(
-                    finalMultiplyNode.GetSlotReference(MultiplyNode.OutputSlotId),
-                    multiplyBy2Node.GetSlotReference(1)
-                );
-                graphData.AddEdge(finalToMultiplyBy2);
-                
-                // Connect to master node (Base Color)
-                var masterNode = graphData.outputNode;
-                if (masterNode != null)
-                {
-                    var baseColorSlot = masterNode.FindSlot<Vector3MaterialSlot>(HDLitMasterNode.AlbedoSlotId);
-                    if (baseColorSlot != null)
-                    {
-                        var toMaster = new Edge(
-                            multiplyBy2Node.GetSlotReference(MultiplyNode.OutputSlotId),
-                            masterNode.GetSlotReference(HDLitMasterNode.AlbedoSlotId)
-                        );
-                        graphData.AddEdge(toMaster);
-                    }
-                }
-                
-                // Save the shader graph
-                File.WriteAllText(OUTPUT_PATH, EditorJsonUtility.ToJson(graphData, true));
-                AssetDatabase.ImportAsset(OUTPUT_PATH);
-                
-                Debug.Log($"✓ ToonBasic HDRP Shader Graph generated successfully at: {OUTPUT_PATH}");
-                Debug.Log("Next steps:");
-                Debug.Log("1. Select ToonBasic.mat material in Assets/Standard Assets/Effects/ToonShading/Materials/");
-                Debug.Log("2. Change shader to 'Shader Graphs/ToonBasic_HDRP'");
-                Debug.Log("3. Test in MainMenu scene");
-                
-                // Ping the asset in the project window
-                var asset = AssetDatabase.LoadAssetAtPath<Object>(OUTPUT_PATH);
-                EditorGUIUtility.PingObject(asset);
-                Selection.activeObject = asset;
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"Failed to generate ToonBasic HDRP Shader Graph: {e.Message}\n{e.StackTrace}");
-            }
+            string guide = @"
+═══════════════════════════════════════════════════════════════
+           ToonBasic → HDRP Shader Graph Conversion Guide
+═══════════════════════════════════════════════════════════════
+
+Unity's Shader Graph API is internal and cannot be scripted.
+You must create the shader graph MANUALLY in Unity Editor.
+
+STEP 1: Create New Shader Graph
+───────────────────────────────
+  • Right-click in Project: Assets/Shaders/HDRP/
+  • Create → Shader Graph → HDRP → Lit Shader Graph
+  • Name it: ToonBasic_HDRP
+
+STEP 2: Add Properties (Blackboard)
+───────────────────────────────────
+  • _Color (Color, default gray)     → Reference: _Color
+  • _MainTex (Texture2D)             → Reference: _MainTex  
+  • _ToonShade (Cubemap)             → Reference: _ToonShade
+
+STEP 3: Build Node Graph
+────────────────────────
+  • Add 'Sample Texture 2D' node → connect _MainTex
+  • Add 'Sample Cubemap' node → connect _ToonShade
+  • Add 'Normal Vector' node (View Space) → connect to Cubemap Dir
+  • Add 'Multiply' node: _Color × Texture sample
+  • Add 'Multiply' node: Result × Cubemap sample  
+  • Add 'Multiply' node: Result × 2.0 (constant)
+  • Connect final output → Base Color (Fragment)
+
+STEP 4: Save and Apply
+──────────────────────
+  • Save shader graph (Ctrl+S)
+  • Use 'Convert Legacy Materials' menu to update materials
+
+Original Toon/Basic formula: 2.0 × Cubemap × (Color × Texture)
+
+═══════════════════════════════════════════════════════════════
+";
+            Debug.Log(guide);
+            EditorUtility.DisplayDialog("ToonBasic HDRP Conversion Guide", 
+                "Conversion instructions have been printed to the Console.\n\n" +
+                "Press Ctrl+Shift+C to open Console window.", "OK");
         }
-        
-        [MenuItem("Tools/Shader Conversion/Generate ToonBasic HDRP Shader Graph", true)]
-        public static bool ValidateGenerateToonBasicShaderGraph()
+
+        [MenuItem("Tools/Shader Conversion/ToonBasic to HDRP/Convert Legacy Materials to HDRP Lit")]
+        public static void ConvertLegacyMaterialsToHDRP()
         {
-            // Check if HDRP and Shader Graph packages are available
-            return true; // TODO: Add package validation if needed
+            // Find all materials using legacy Toon shaders
+            string[] guids = AssetDatabase.FindAssets("t:Material");
+            int converted = 0;
+            int skipped = 0;
+            
+            Shader hdrpLit = Shader.Find(HDRP_LIT_SHADER);
+            if (hdrpLit == null)
+            {
+                Debug.LogError("HDRP/Lit shader not found. Is HDRP installed and configured?");
+                return;
+            }
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+                
+                if (mat == null || mat.shader == null) continue;
+                
+                string shaderName = mat.shader.name;
+                if (shaderName.Contains("Toon/Basic") || 
+                    shaderName.Contains("Toon/Lit") ||
+                    shaderName == "Hidden/InternalErrorShader")
+                {
+                    // Preserve properties before conversion
+                    Color mainColor = mat.HasProperty("_Color") ? mat.GetColor("_Color") : Color.white;
+                    Texture mainTex = mat.HasProperty("_MainTex") ? mat.GetTexture("_MainTex") : null;
+                    
+                    // Convert to HDRP/Lit
+                    mat.shader = hdrpLit;
+                    
+                    // Remap properties
+                    if (mat.HasProperty("_BaseColor"))
+                        mat.SetColor("_BaseColor", mainColor);
+                    if (mat.HasProperty("_BaseColorMap") && mainTex != null)
+                        mat.SetTexture("_BaseColorMap", mainTex);
+                    
+                    EditorUtility.SetDirty(mat);
+                    Debug.Log($"Converted: {path}");
+                    converted++;
+                }
+                else
+                {
+                    skipped++;
+                }
+            }
+            
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Material conversion complete: {converted} converted, {skipped} skipped");
+        }
+
+        [MenuItem("Tools/Shader Conversion/ToonBasic to HDRP/Find Broken Materials")]
+        public static void FindBrokenMaterials()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:Material");
+            int broken = 0;
+            
+            Debug.Log("Scanning for broken/legacy materials...\n");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+                
+                if (mat == null) continue;
+                
+                bool isBroken = false;
+                string reason = "";
+                
+                if (mat.shader == null)
+                {
+                    isBroken = true;
+                    reason = "Shader is null";
+                }
+                else if (mat.shader.name == "Hidden/InternalErrorShader")
+                {
+                    isBroken = true;
+                    reason = "Missing shader (pink material)";
+                }
+                else if (mat.shader.name.Contains("Toon/"))
+                {
+                    isBroken = true;
+                    reason = $"Legacy shader: {mat.shader.name}";
+                }
+                
+                if (isBroken)
+                {
+                    Debug.LogWarning($"[BROKEN] {path}\n  Reason: {reason}");
+                    broken++;
+                }
+            }
+            
+            if (broken == 0)
+                Debug.Log("✓ No broken materials found!");
+            else
+                Debug.LogWarning($"\n══ Found {broken} broken/legacy materials ══\n" +
+                    "Use 'Convert Legacy Materials to HDRP Lit' to fix them.");
+        }
+
+        [MenuItem("Tools/Shader Conversion/ToonBasic to HDRP/Create Shader Graph Folder")]
+        public static void CreateShaderGraphFolder()
+        {
+            string folder = Path.GetDirectoryName(SHADER_GRAPH_PATH);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+                AssetDatabase.Refresh();
+                Debug.Log($"Created folder: {folder}");
+                
+                // Select the folder
+                var folderAsset = AssetDatabase.LoadAssetAtPath<Object>(folder);
+                if (folderAsset != null)
+                {
+                    Selection.activeObject = folderAsset;
+                    EditorGUIUtility.PingObject(folderAsset);
+                }
+            }
+            else
+            {
+                Debug.Log($"Folder already exists: {folder}");
+            }
+            
+            Debug.Log("\nNext: Right-click in Project window → Create → Shader Graph → HDRP → Lit Shader Graph");
         }
     }
 }
