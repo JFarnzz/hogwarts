@@ -103,17 +103,17 @@ namespace Crest
                 // GetKeywordName will work for both global and local keywords.
                 var shaderKeywordName = ShaderKeyword.GetKeywordName(shader, shaderKeyword);
 
-                // These keywords will not be on ocean material.
+                // These keywords will not be on ocean material. They are controlled at runtime
+                // and should not be stripped.
                 if (shaderKeywordName.Contains("_MENISCUS") || shaderKeywordName.Contains("_FULL_SCREEN_EFFECT"))
                 {
                     usedShaderKeywords.Add(shaderKeyword);
                     continue;
                 }
 
-                // TODO: Strip this once post-processing is more unified.
+                // Debug view ocean mask is a debug-only feature and should be stripped in builds.
                 if (shaderKeywordName.Contains("_DEBUG_VIEW_OCEAN_MASK"))
                 {
-                    usedShaderKeywords.Add(shaderKeyword);
                     continue;
                 }
 
